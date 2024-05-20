@@ -1,16 +1,16 @@
 ﻿using NAudio.Wave;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-
 namespace ITopiaMAUI
 {
     public class Sound
     {
-        private WaveOutEvent waveOut { get; set; }
+        private WaveOutEvent waveOut;
         int i = 1;
+        float volume { get; set; }
 
+        public Sound()
+        {
+            waveOut = new WaveOutEvent();
+        }
         public async void Music()
         {
             while (i != 0)
@@ -25,21 +25,17 @@ namespace ITopiaMAUI
                         {
                             try
                             {
-                                using (waveOut = new WaveOutEvent())
+                                waveOut.Init(waveStream);
+                                waveOut.Volume = 1;
+                                waveOut.Play();
+
+                                while (waveOut.PlaybackState == PlaybackState.Playing)
                                 {
-                                    waveOut.Init(waveStream);
                                     waveOut.Volume = 1;
-                                    waveOut.Play();
-
-                                    while (waveOut.PlaybackState == PlaybackState.Playing)
-                                    {
-                                        waveOut.Volume = 1;
-                                        await Task.Delay(100);
-                                        if (i == 0)
-                                            break;
-                                    }
+                                    await Task.Delay(100);
+                                    if (i == 0)
+                                        break;
                                 }
-
                             }
                             catch (Exception) { return; }
                         }
@@ -47,7 +43,7 @@ namespace ITopiaMAUI
                 }
             }
         }
-        public async void Play(byte[] s)
+        public async void Effect(byte[] s)
         {
             using (MemoryStream stream = new MemoryStream(s))
             {
@@ -55,17 +51,14 @@ namespace ITopiaMAUI
                 {
                     try
                     {
-                        using (waveOut = new WaveOutEvent())
-                        {
-                            waveOut.Init(waveStream);
-                            waveOut.Volume = 1;
-                            waveOut.Play();
+                        waveOut.Init(waveStream);
+                        waveOut.Volume = 1;
+                        waveOut.Play();
 
-                            while (waveOut.PlaybackState == PlaybackState.Playing)
-                            {
-                                waveOut.Volume = 1;
-                                await Task.Delay(100);
-                            }
+                        while (waveOut.PlaybackState == PlaybackState.Playing)
+                        {
+                            waveOut.Volume = 1;
+                            await Task.Delay(100);
                         }
                     }
                     catch (Exception) { return; }
