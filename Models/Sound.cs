@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using ITopiaMAUI.Models;
+using NAudio.Wave;
 namespace ITopiaMAUI
 {
     public class Sound
@@ -31,7 +32,7 @@ namespace ITopiaMAUI
 
                                 while (waveOut.PlaybackState == PlaybackState.Playing)
                                 {
-                                    waveOut.Volume = 1;
+                                    waveOut.Volume = GameSetting.Volume;
                                     await Task.Delay(100);
                                     if (i == 0)
                                         break;
@@ -52,7 +53,7 @@ namespace ITopiaMAUI
                     try
                     {
                         waveOut.Init(waveStream);
-                        waveOut.Volume = 1;
+                        waveOut.Volume = GameSetting.Volume;
                         waveOut.Play();
 
                         while (waveOut.PlaybackState == PlaybackState.Playing)

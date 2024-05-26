@@ -3,6 +3,7 @@ namespace ITopiaMAUI.Views;
 public partial class MainFormView : ContentPage
 {
     AbsoluteLayout layout;
+    Frame settingLayout;
     public MainFormView()
     {
         BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.University);
@@ -10,16 +11,23 @@ public partial class MainFormView : ContentPage
         Label title1 = new Label { Text = "IT", TextColor = Colors.Black, FontSize = 60 };
         Label title2 = new Label { Text = "opia", TextColor = Colors.Orange, FontSize = 60 };
         AddRange(title1, title2);
-        Button new_game = new Button { Text = "Uus mäng" };
-        Button continue_game = new Button { Text = "Jätka" };
-        Button setting = new Button { Text = "Sätted" };
-        Button exit = new Button { Text = "Välju" };
-        exit.Clicked += (s,e) =>
+        Button new_game = new Button { Text = "Uus mÃ¤ng" };
+        Button continue_game = new Button { Text = "JÃ¤tka" };
+        Button setting = new Button { Text = "SÃ¤tted" };
+        Button exit = new Button { Text = "VÃ¤lju" };
+        exit.Clicked += (s, e) => Application.Current.Quit();
+        setting.Clicked += (s, e) =>
         {
-            StackLayout st = SettingView.SettingStackLayout();
-            layout.Children.Add(st);
-
-            layout.SetLayoutBounds(st, new Rect(50, 17, layout.Width, layout.Height));
+            if (settingLayout == null)
+            {
+                settingLayout = SettingView.SettingLayout();
+                layout.Children.Add(settingLayout);
+                layout.SetLayoutBounds(settingLayout, new Rect(15, 4, layout.Width, layout.Height));
+            }
+            else
+            {
+                settingLayout.IsVisible = !settingLayout.IsVisible;
+            }
         };
         foreach (Button btn in new Button[] { new_game, continue_game, setting, exit })
         {
@@ -40,6 +48,5 @@ public partial class MainFormView : ContentPage
         layout.SetLayoutBounds(exit, new Rect(430, 260, layout.Width, layout.Height));
         Content = layout;
     }
-
     private void AddRange(params IView[] views) => Array.ForEach(views, layout.Add);
 }
