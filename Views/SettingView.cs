@@ -14,9 +14,9 @@ public class SettingView : ContentPage
         {
             HorizontalOptions = LayoutOptions.Center,
             WidthRequest = 400,
-            HeightRequest = 50,
+            HeightRequest = 60,
             BackgroundColor= Colors.White,
-            Margin= new Thickness(0,150,0,0),
+            Margin= new Thickness(0,140,0,0),
         };
         AddRange(settingLayout, name);
         Content = settingLayout;
