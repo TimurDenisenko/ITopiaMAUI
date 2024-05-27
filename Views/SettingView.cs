@@ -5,10 +5,29 @@ namespace ITopiaMAUI.Views;
 public class SettingView : ContentPage
 {
 	public SettingView()
-	{
-
+    {
+        StackLayout settingLayout = new StackLayout
+        {
+            BackgroundColor = Colors.Black,
+        };
+        Entry name = new Entry
+        {
+            HorizontalOptions = LayoutOptions.Center,
+            WidthRequest = 400,
+            HeightRequest = 50,
+            BackgroundColor= Colors.White,
+            Margin= new Thickness(0,150,0,0),
+        };
+        AddRange(settingLayout, name);
+        Content = settingLayout;
 	}
-	public static Frame SettingLayout()
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Shell.SetNavBarIsVisible(this, false);
+    }
+
+    public static Frame SettingLayout()
 	{
         StackLayout st = new StackLayout
         {
