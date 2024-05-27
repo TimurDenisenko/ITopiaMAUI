@@ -16,11 +16,29 @@ public class SettingView : ContentPage
             WidthRequest = 400,
             HeightRequest = 60,
             BackgroundColor= Colors.White,
-            Margin= new Thickness(0,140,0,0),
+            PlaceholderColor = Colors.Gray,
+            Placeholder = "Nimi...",
         };
-        AddRange(settingLayout, name);
+        ImageButton ok = new ImageButton
+        {
+            Source = FileManage.ConvertToImageSource(Properties.Resources.ok),
+            WidthRequest = 25,
+            HeightRequest = 25,
+            Margin= new Thickness(20, 0, 0, 0),
+        };
+        ok.Clicked += async (s, e) =>
+        {
+            if (name.Text==string.Empty || name.Text.All(char.IsAsciiLetter))
+            {
+                await DisplayAlert("Viga", "Nimi on tühi või sisaldab keelatud tähemärke", "Tühista");
+                return;
+            }
+            NovellaScenario.Name = name.Text;
+            await Navigation.PushAsync(new GameView());
+        };
+        AddRange(settingLayout, new HorizontalStackLayout { Children = { name, ok }, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 140, 0, 0), });
         Content = settingLayout;
-	}
+    }
     protected override void OnAppearing()
     {
         base.OnAppearing();
