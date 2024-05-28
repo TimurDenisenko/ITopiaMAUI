@@ -1,3 +1,5 @@
+using ITopiaMAUI.Models;
+
 namespace ITopiaMAUI.Views;
 
 public partial class MainFormView : ContentPage
@@ -12,23 +14,16 @@ public partial class MainFormView : ContentPage
         Label title2 = new Label { Text = "opia", TextColor = Colors.Orange, FontSize = 60 };
         AddRange(title1, title2);
         Button new_game = new Button { Text = "Uus mäng" };
-        new_game.Clicked += (s, e) => Navigation.PushAsync(new SettingView());
+        new_game.Clicked += (s, e) => Navigation.PushAsync(new GameView());
         Button continue_game = new Button { Text = "Jätka" };
         Button setting = new Button { Text = "Sätted" };
         Button exit = new Button { Text = "Välju" };
         exit.Clicked += (s, e) => Application.Current.Quit();
         setting.Clicked += (s, e) =>
         {
-            if (settingLayout == null)
-            {
-                settingLayout = SettingView.SettingLayout();
-                layout.Children.Add(settingLayout);
-                layout.SetLayoutBounds(settingLayout, new Rect(15, 4, layout.Width, layout.Height));
-            }
-            else
-            {
-                settingLayout.IsVisible = !settingLayout.IsVisible;
-            }
+            settingLayout = SettingView.SettingFrame();
+            layout.Children.Add(settingLayout);
+            layout.SetLayoutBounds(settingLayout, new Rect(15, 4, layout.Width, layout.Height));
         };
         foreach (Button btn in new Button[] { new_game, continue_game, setting, exit })
         {

@@ -1,10 +1,12 @@
 using ITopiaMAUI.Models;
+using Microsoft.Maui.Graphics.Text;
 
 namespace ITopiaMAUI.Views;
 
 public class SettingView : ContentPage
 {
-	public SettingView()
+    private static TaskCompletionSource<bool> tcs;
+    public SettingView()
     {
         StackLayout settingLayout = new StackLayout
         {
@@ -45,11 +47,10 @@ public class SettingView : ContentPage
         Shell.SetNavBarIsVisible(this, false);
     }
 
-    public static Frame SettingLayout()
+    public static Frame SettingFrame()
 	{
-        StackLayout st = new StackLayout
-        {
-		};
+        tcs = new TaskCompletionSource<bool>();
+        StackLayout st = new StackLayout();
 		Label settingLabel = new Label
 		{ 
 			Text = "Sätted",
@@ -111,10 +112,55 @@ public class SettingView : ContentPage
             WidthRequest = 600,
             HeightRequest = 300,
             BackgroundColor = Color.FromRgb(124, 32, 58),
-            Opacity = 0.9,
         };
-        btn.Clicked += (s, e) => templateFrame.IsVisible = !templateFrame.IsVisible;
+        btn.Clicked += (s, e) =>
+        {
+            templateFrame.IsVisible = false;
+            tcs.SetResult(true);
+        };
         return templateFrame;
 	}
+    public static Frame MenuFrame()
+    {
+        StackLayout st = new StackLayout();
+        Frame templateFrame = new Frame
+        {
+            Content = st,
+            CornerRadius = 45,
+            WidthRequest = 400,
+            HeightRequest = 200,
+            BackgroundColor = Color.FromRgb(124, 32, 58),
+        };
+        Button setting = new Button
+        {
+            Text = "Sätted"
+        };
+        setting.Clicked += async (s, e) =>
+        {
+            templateFrame.WidthRequest = 600;
+            templateFrame.HeightRequest = 300;
+            templateFrame.Content = SettingFrame();
+            await tcs.Task;
+            templateFrame.IsVisible = false;
+        };
+        Button save = new Button
+        {
+            Text = "Salvestamine"
+        };
+        Button load = new Button
+        {
+            Text = "Laadimine"
+        };
+        Array.ForEach(new Button[] { setting, save, load }, x =>
+            {
+                x.WidthRequest = 500;
+                x.BackgroundColor = Colors.Transparent;
+                x.TextColor = Color.FromRgb(255, 159, 104);
+                x.FontSize = 25;
+            }
+        );
+        AddRange(st,setting, save,load );
+        return templateFrame;
+    }
     private static void AddRange(StackLayout layout, params IView[] views) => Array.ForEach(views, layout.Add);
 }

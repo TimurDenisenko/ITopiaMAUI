@@ -5,12 +5,12 @@ namespace ITopiaMAUI
     {
         public int PageNum { get; set; }
         public string Name { get; set; }
-        public Gender Gender { get; set; }
-        public SaveClass(int pageNum, string name, Gender gender)
+        public string Scenario { get; set; }
+        public SaveClass(int pageNum, string name, string scenario)
         {
             PageNum = pageNum;
             Name = name;
-            Gender = gender;
+            Scenario = scenario;
         }
     }
 }
