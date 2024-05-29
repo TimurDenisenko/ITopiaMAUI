@@ -1,12 +1,11 @@
-using ITopiaMAUI.Models;
-using Microsoft.Maui.Controls;
+using ITopiaMAUI.ViewModels;
 
 namespace ITopiaMAUI.Views;
 
 public class GameView : ContentPage
 {
     Frame menuFrame;
-	public GameView()
+	public GameView(SaveViewModel save = null)
     {
         BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.University);
         AbsoluteLayout mainLayout = new AbsoluteLayout
@@ -38,10 +37,14 @@ public class GameView : ContentPage
         Label dialog = new Label
         {
             HeightRequest = 80,
-            WidthRequest = 820,
+            WidthRequest = 760,
             FontSize = 15,
             TextColor = Colors.Black,
-        }; 
+        };
+        if (save!=null)
+        {
+            dialog.Text = save.Name;
+        }
         StackLayout st = new StackLayout { 
             Children = 
             {
@@ -50,11 +53,11 @@ public class GameView : ContentPage
                 CornerRadius = 25,
                 BorderColor = Colors.Black,
                 BackgroundColor = Colors.LightGray,
-                WidthRequest = 840,
+                WidthRequest = 780,
                 HeightRequest = 80,
-                Opacity = 0.7
                 }
-            } 
+            },
+            Opacity = 0.7
         };
         Button back = new Button
         {
@@ -64,17 +67,17 @@ public class GameView : ContentPage
         };
         Button forward = new Button
         {
-            WidthRequest = 430,
+            WidthRequest = 400,
             BackgroundColor = Colors.Transparent,
             CornerRadius = 25,
         };
         AddRange(mainLayout,menu, character, st,dialog,back,forward);
-        mainLayout.SetLayoutBounds(menu,new Rect(-400, -150, mainLayout.WidthRequest, mainLayout.HeightRequest));
-        mainLayout.SetLayoutBounds(dialog, new Rect(3, 135, mainLayout.WidthRequest, mainLayout.HeightRequest));
+        mainLayout.SetLayoutBounds(menu,new Rect(-360, -150, mainLayout.WidthRequest, mainLayout.HeightRequest));
+        mainLayout.SetLayoutBounds(dialog, new Rect(10, 135, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(st, new Rect(0, 260, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(back, new Rect(-215, 250, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(forward, new Rect(215, 250, mainLayout.WidthRequest, mainLayout.HeightRequest));
-        mainLayout.SetLayoutBounds(character, new Rect(0, 0, mainLayout.WidthRequest, mainLayout.HeightRequest));
+        mainLayout.SetLayoutBounds(character, new Rect(0, 20, mainLayout.WidthRequest, mainLayout.HeightRequest));
         Grid grid = new Grid();
         Content = mainLayout;
     }

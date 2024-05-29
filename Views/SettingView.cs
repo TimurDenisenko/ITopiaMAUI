@@ -1,5 +1,6 @@
 using ITopiaMAUI.Models;
-using Microsoft.Maui.Graphics.Text;
+using ITopiaMAUI.ViewModels;
+using Kotlin.Time;
 
 namespace ITopiaMAUI.Views;
 
@@ -143,15 +144,17 @@ public class SettingView : ContentPage
             await tcs.Task;
             templateFrame.IsVisible = false;
         };
-        Button save = new Button
+        Button saveLoad = new Button
         {
-            Text = "Salvestamine"
+            Text = "Salvesta juhtimine"
         };
-        Button load = new Button
+        saveLoad.Clicked += async (s, e) =>
         {
-            Text = "Laadimine"
+            templateFrame.Content = SavingFrame("save");
+            await tcs.Task;
+            templateFrame.IsVisible = false;
         };
-        Array.ForEach(new Button[] { setting, save, load }, x =>
+        Array.ForEach(new Button[] { setting, saveLoad }, x =>
             {
                 x.WidthRequest = 500;
                 x.BackgroundColor = Colors.Transparent;
@@ -159,7 +162,80 @@ public class SettingView : ContentPage
                 x.FontSize = 25;
             }
         );
-        AddRange(st,setting, save,load );
+        AddRange(st,setting, saveLoad );
+        return templateFrame;
+    }
+    public static Frame SavingFrame(string btnName)
+    {
+        tcs = new TaskCompletionSource<bool>();
+        StackLayout st = new StackLayout();
+        Frame templateFrame = new Frame
+        {
+            Content = st,
+            CornerRadius = 45,
+            WidthRequest = 400,
+            HeightRequest = 200,
+            BackgroundColor = Color.FromRgb(124, 32, 58),
+        };
+        ImageButton exit = new ImageButton
+        {
+            Source = FileManage.ConvertToImageSource(Properties.Resources.exit),
+            WidthRequest = 25,
+            HeightRequest = 25,
+            HorizontalOptions = LayoutOptions.Start,
+        };
+        exit.Clicked += (s, e) =>
+        {
+            templateFrame.IsVisible = false;
+            tcs.SetResult(true);
+        };
+        ListView saves = new ListView
+        {
+            ItemsSource = App.Database.GetSaves(),
+            ItemTemplate = new DataTemplate(() =>
+            {
+                Label name = new Label { TextColor = Color.FromRgb(255, 159, 104) };
+                Label num = new Label { TextColor = Color.FromRgb(255, 159, 104) };
+                name.SetBinding(Label.TextProperty, "Scenario");
+                num.SetBinding(Label.TextProperty, "PageNum");
+                return new ViewCell
+                {
+                    View = new VerticalStackLayout
+                    {
+                        Children = { name,num }
+                    }
+                };
+            }),
+            WidthRequest = 300,
+            HeightRequest = 150,
+            Margin = new Thickness(30,0,0,0),
+        };
+        saves.ItemSelected += (s, e) =>
+        {
+            Application.Current.MainPage = new GameView(e.SelectedItem as SaveViewModel);
+        };
+        Button save = new Button
+        {
+            Text = "Salvesta",
+            BorderColor = Colors.Black,
+            TextColor = Color.FromRgb(255, 159, 104)
+        };
+        save.Clicked += (s, e) =>
+        {
+            DBSaveModel save = new DBSaveModel 
+            { 
+                ID = 1,
+                Name = "fsdf",
+                PageNum = 42,
+                Scenario = "fdsf"
+            };
+            if (new string[] { save.Name, save.PageNum == 0 ? string.Empty : "fill", save.Scenario }.All(x => !string.IsNullOrEmpty(x)))
+            {
+                App.Database.SaveSave(save);
+                saves.ItemsSource = App.Database.GetSaves();
+            }
+        };
+        AddRange(st, exit, saves, save);
         return templateFrame;
     }
     private static void AddRange(StackLayout layout, params IView[] views) => Array.ForEach(views, layout.Add);
