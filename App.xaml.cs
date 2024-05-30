@@ -19,7 +19,13 @@ public partial class App : Application
         }
     }
     public App()
-	{
-		MainPage = new Shell { CurrentItem = new MainFormView()};
+    {
+        
+        Database.SaveNovellaScenario(new DBNovellaScenario
+        {
+            Author = "Timur Denisenko",
+            Scenario = FileManage.SerializeToFile(ITopiaMAUI.Properties.Resources.scenario.Split('\n'))
+        });
+        MainPage = new Shell { CurrentItem = new MainFormView()};
 	}
 }

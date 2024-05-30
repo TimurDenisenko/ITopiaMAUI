@@ -25,6 +25,12 @@ public partial class MainFormView : ContentPage
             layout.Children.Add(settingLayout);
             layout.SetLayoutBounds(settingLayout, new Rect(15, 4, layout.Width, layout.Height));
         };
+        continue_game.Clicked += (s, e) =>
+        {
+            settingLayout = SettingView.SavingFrame();
+            layout.Children.Add(settingLayout);
+            layout.SetLayoutBounds(settingLayout, new Rect(-17, 50, layout.Width, layout.Height));
+        };
         foreach (Button btn in new Button[] { new_game, continue_game, setting, exit })
         {
             btn.Opacity = 0.9;

@@ -1,6 +1,5 @@
 using ITopiaMAUI.Models;
 using ITopiaMAUI.ViewModels;
-using Kotlin.Time;
 
 namespace ITopiaMAUI.Views;
 
@@ -150,11 +149,16 @@ public class SettingView : ContentPage
         };
         saveLoad.Clicked += async (s, e) =>
         {
-            templateFrame.Content = SavingFrame("save");
+            templateFrame.Content = SavingFrame();
             await tcs.Task;
             templateFrame.IsVisible = false;
         };
-        Array.ForEach(new Button[] { setting, saveLoad }, x =>
+        Button exit = new Button
+        {
+            Text = "Välja"
+        };
+        exit.Clicked += (s,e) => Application.Current.MainPage = new MainFormView();
+        Array.ForEach(new Button[] { setting, saveLoad, exit }, x =>
             {
                 x.WidthRequest = 500;
                 x.BackgroundColor = Colors.Transparent;
@@ -162,10 +166,10 @@ public class SettingView : ContentPage
                 x.FontSize = 25;
             }
         );
-        AddRange(st,setting, saveLoad );
+        AddRange(st,setting, saveLoad, exit );
         return templateFrame;
     }
-    public static Frame SavingFrame(string btnName)
+    public static Frame SavingFrame()
     {
         tcs = new TaskCompletionSource<bool>();
         StackLayout st = new StackLayout();
@@ -218,16 +222,17 @@ public class SettingView : ContentPage
         {
             Text = "Salvesta",
             BorderColor = Colors.Black,
-            TextColor = Color.FromRgb(255, 159, 104)
+            TextColor = Color.FromRgb(255, 159, 104),
+            FontSize = 25,
+            BackgroundColor = Color.FromRgb(124, 32, 58),
         };
         save.Clicked += (s, e) =>
         {
             DBSaveModel save = new DBSaveModel 
             { 
-                ID = 1,
-                Name = "fsdf",
-                PageNum = 42,
-                Scenario = "fdsf"
+                Name = "test",
+                PageNum = NovellaScenario.PageNum,
+                Scenario = FileManage.SerializeToFile(NovellaScenario.Scenario),
             };
             if (new string[] { save.Name, save.PageNum == 0 ? string.Empty : "fill", save.Scenario }.All(x => !string.IsNullOrEmpty(x)))
             {

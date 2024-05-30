@@ -63,9 +63,9 @@ namespace ITopiaMAUI.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Byte[].
         /// </summary>
-        internal static byte[] anna {
+        internal static byte[] Anna {
             get {
-                object obj = ResourceManager.GetObject("anna", resourceCulture);
+                object obj = ResourceManager.GetObject("Anna", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -97,6 +97,30 @@ namespace ITopiaMAUI.Properties {
             get {
                 object obj = ResourceManager.GetObject("ok", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Empty
+        ///Monday
+        ///Setting
+        ///Back: University | Pers: Anna
+        ///MH - (No way, first day of new university and I’m late) 
+        ///MH - (Where is this classroom A398?)
+        ///Anna - Hi, you look lost. Don&apos;t know where your classroom is?
+        ///MH - Hi, yep, I can’t find A398.
+        ///Anna - My name is Anna, what is your name?
+        ///MH - [player] 
+        ///Anna - Nice to meet you. Let me show you where your classroom is. I have a lecture nearby.
+        ///MH - Let’s go
+        ///Setting
+        ///Back: Corridor
+        ///Anna - Here is the classroom A398. So, bye bye.
+        ///MH - Bye, bye! Thank yo [остаток строки не уместился]&quot;;.
+        /// </summary>
+        internal static string scenario {
+            get {
+                return ResourceManager.GetString("scenario", resourceCulture);
             }
         }
         

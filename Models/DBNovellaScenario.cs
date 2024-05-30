@@ -7,8 +7,8 @@ namespace ITopiaMAUI.Models
     public class DBNovellaScenario
     {
         [PrimaryKey,AutoIncrement]
-        public int Id { get; set; }
-        public string[] Scenario { get; set; }
+        public int ID { get; set; }
+        public string Scenario { get; set; }
         public string Author { get; set; }
     }
 }
