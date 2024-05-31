@@ -216,7 +216,7 @@ public class SettingView : ContentPage
         };
         saves.ItemSelected += (s, e) =>
         {
-            Application.Current.MainPage = new GameView(e.SelectedItem as SaveViewModel);
+            Application.Current.MainPage = new GameView(new SaveViewModel { Save = (DBSaveModel)e.SelectedItem } );
         };
         Button save = new Button
         {

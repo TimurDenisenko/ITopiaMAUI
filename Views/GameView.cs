@@ -1,5 +1,6 @@
 using ITopiaMAUI.Models;
 using ITopiaMAUI.ViewModels;
+using System.Threading.Channels;
 
 namespace ITopiaMAUI.Views;
 
@@ -21,6 +22,8 @@ public class GameView : ContentPage
         {
             NovellaScenario.PageNum = save.PageNum;
             NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(save.Scenario);
+            Setting("Back",save.CurrentBackground);
+            Setting("Pers", save.CurrentPers);
         }
         AbsoluteLayout mainLayout = new AbsoluteLayout
         {
@@ -111,7 +114,6 @@ public class GameView : ContentPage
             {
                 Setting(changes[i].Split(":")[0], changes[i].Split(":")[1]);
             }
-            ++NovellaScenario.PageNum;
             GoForward();
         }
         else if (currentLine == LineType.Empty)
@@ -119,7 +121,7 @@ public class GameView : ContentPage
             ++NovellaScenario.PageNum;
             BackgroundColor = Colors.Black;
             BackgroundImageSource = null;
-            NovellaScenario.CurrentLocation = "none";updat
+            NovellaScenario.CurrentLocation = "none";
             title.Text = NovellaScenario.Scenario[NovellaScenario.PageNum];
         }
         else
@@ -139,10 +141,12 @@ public class GameView : ContentPage
         switch (setting)
         {
             case "Back":
-                BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                NovellaScenario.CurrentBackground = value;
                 NovellaScenario.CurrentLocation = value;
+                BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
                 break;
             case "Pers":
+                NovellaScenario.CurrentPers = value;
                 character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
                 break;
             default:

@@ -27,6 +27,8 @@ namespace ITopiaMAUI.Models
             }
             return database.Insert(item);
         }
+        public void DeleteAllSaves() =>
+            database.DeleteAll<DBSaveModel>();
         public IEnumerable<DBNovellaScenario> GetNovellaScenarios() =>
             database.Table<DBNovellaScenario>().ToList();
         public DBNovellaScenario GetNovellaScenario(int id) =>
@@ -42,6 +44,7 @@ namespace ITopiaMAUI.Models
             }
             return database.Insert(item);
         }
-        public void DeleteAllNovellaScenarios() => database.DeleteAll<DBNovellaScenario>();
+        public void DeleteAllNovellaScenarios() => 
+            database.DeleteAll<DBNovellaScenario>();
     }
 }

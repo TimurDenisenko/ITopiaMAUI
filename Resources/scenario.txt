@@ -8,6 +8,8 @@ Setting
 Pers: Anna
 Anna - Hi, you look lost. Don't know where your classroom is?
 MH - Hi, yep, I can’t find A398.
+Setting
+Pers: None
 Anna - My name is Anna, what is your name?
 MH - [player] 
 Anna - Nice to meet you. Let me show you where your classroom is. I have a lecture nearby.

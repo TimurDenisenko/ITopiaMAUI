@@ -21,6 +21,7 @@ public partial class App : Application
     public App()
     {
         Database.DeleteAllNovellaScenarios();
+        Database.DeleteAllSaves();
         Database.SaveNovellaScenario(new DBNovellaScenario
         {
             Author = "Timur Denisenko",

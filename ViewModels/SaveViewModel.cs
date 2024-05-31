@@ -52,6 +52,26 @@ namespace ITopiaMAUI.ViewModels
                 OnPropertyChanged("Scenario");
             }
         }
+        public string CurrentBackground
+        {
+            get { return Save.CurrentBackground; }
+            set
+            {
+                if (Save.CurrentBackground == value) return;
+                Save.CurrentBackground = value;
+                OnPropertyChanged("CurrentBackground");
+            }
+        }
+        public string CurrentPers
+        {
+            get { return Save.CurrentPers; }
+            set
+            {
+                if (Save.CurrentPers == value) return;
+                Save.CurrentPers = value;
+                OnPropertyChanged("CurrentPers");
+            }
+        }
         public bool IsValid
         {
             get

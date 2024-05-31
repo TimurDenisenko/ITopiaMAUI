@@ -14,34 +14,19 @@ namespace ITopiaMAUI.ViewModels
         public ICommand DeleteSaveCommand { get; protected set; }
         public ICommand SaveSaveCommand { get; protected set; }
         public ICommand BackCommand { get; protected set; }
-        SaveViewModel selectedSave;
         public INavigation Navigation { get; set; }
         public SaveListViewModel()
         {
             Saves = new ObservableCollection<SaveViewModel>();
-            CreateSaveCommand = new Command(CreateSave);
             DeleteSaveCommand = new Command(DeleteSave);
             SaveSaveCommand = new Command(SaveSave);
             BackCommand = new Command(Back);
-        }
-        public SaveViewModel SelectedSave
-        {
-            get { return selectedSave; }
-            set
-            {
-                if (selectedSave == value) return;
-                SaveViewModel temp = value;
-                selectedSave = null;
-                OnPropertyChanged("SelectedSave");
-                Navigation.PushAsync(new GameView(temp));
-            }
         }
         protected void OnPropertyChanged(string propName)
         {
             if (PropertyChanged == null) return;
             PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
-        private void CreateSave() => Navigation.PushAsync(new GameView(new SaveViewModel() { SaveListViewModel = this }));
         private void Back() => Navigation.PopAsync();
         private void SaveSave(object SaveObj)
         {
