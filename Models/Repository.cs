@@ -42,5 +42,6 @@ namespace ITopiaMAUI.Models
             }
             return database.Insert(item);
         }
+        public void DeleteAllNovellaScenarios() => database.DeleteAll<DBNovellaScenario>();
     }
 }

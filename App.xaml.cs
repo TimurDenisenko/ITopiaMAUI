@@ -20,7 +20,7 @@ public partial class App : Application
     }
     public App()
     {
-        
+        Database.DeleteAllNovellaScenarios();
         Database.SaveNovellaScenario(new DBNovellaScenario
         {
             Author = "Timur Denisenko",

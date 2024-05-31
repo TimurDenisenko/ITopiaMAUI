@@ -13,7 +13,7 @@ public class GameView : ContentPage
     {
         if (save == null)
         {
-            DBNovellaScenario ns = App.Database.GetNovellaScenario(1);
+            DBNovellaScenario ns = App.Database.GetNovellaScenarios().ToArray()[0];
             NovellaScenario.PageNum = 0;
             NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(ns.Scenario);
         }
@@ -106,19 +106,10 @@ public class GameView : ContentPage
         if (currentLine == LineType.Setting)
         {
             ++NovellaScenario.PageNum;
-            string[] changes = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace(" ", "").Split('|');
-            if (currentLine == LineType.Setting)
+            string[] changes = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace(" ", "").Trim().Split('|');
+            for (int i = 0; i < changes.Length; i++)
             {
-                BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(changes[0].Split(':')[1]) as byte[]);
-                NovellaScenario.CurrentLocation = changes[0].Split(':')[1];
-                if (changes.Length == 2)
-                {
-                    character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(changes[1].Split(':')[1]) as byte[]);
-                }
-            }
-            else
-            {
-                character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(changes[0].Split(':')[1]) as byte[]);
+                Setting(changes[i].Split(":")[0], changes[i].Split(":")[1]);
             }
             ++NovellaScenario.PageNum;
             GoForward();
@@ -128,7 +119,7 @@ public class GameView : ContentPage
             ++NovellaScenario.PageNum;
             BackgroundColor = Colors.Black;
             BackgroundImageSource = null;
-            NovellaScenario.CurrentLocation = "none";
+            NovellaScenario.CurrentLocation = "none";updat
             title.Text = NovellaScenario.Scenario[NovellaScenario.PageNum];
         }
         else
@@ -141,6 +132,21 @@ public class GameView : ContentPage
                 dialog.Text += item;
                 await Task.Delay(10);
             }
+        }
+    }
+    private void Setting(string setting, string value)
+    {
+        switch (setting)
+        {
+            case "Back":
+                BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                NovellaScenario.CurrentLocation = value;
+                break;
+            case "Pers":
+                character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                break;
+            default:
+                break;
         }
     }
     private void GoBack()
