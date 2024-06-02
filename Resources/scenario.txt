@@ -5,7 +5,7 @@ Back: University
 MH - (No way, first day of new university and I’m late) 
 MH - (Where is this classroom A398?)
 Setting
-Pers: Anna | RevPers: None
+Pers: Anna
 Anna - Hi, you look lost. Don't know where your classroom is?
 MH - Hi, yep, I can’t find A398.
 Anna - My name is Anna, what is your name?
@@ -13,18 +13,18 @@ MH - [player]
 Anna - Nice to meet you. Let me show you where your classroom is. I have a lecture nearby.
 MH - Let’s go
 Setting
-Back: Corridor | RevBack: University
+Back: Corridor
 Anna - Here is the classroom A398. So, bye bye.
 MH - Bye, bye! Thank you!
 Setting
-Back: _Class | Pers: None | RevBack: Corridor | RevPers: Anna
+Back: _Class | Pers: None
 MH - (She ran to her classroom so fast, I think she was already late when we met. At least she helped me)
 MH - … … …
 MH - (First day and we have a lecture for about 4 hours. Now it has become soooo boring. Only after 2 hours is end)
 MH - … … …
 Teacher - …Now I am gonna explain you, some basics of C#. 
 Setting
-Back: Caffeine | RevBack: _Class
+Back: Caffeine
 MH - (Finally, a break! I need some caffeine.)
 MH - i decide to grab a coffee before heading to his next class
 MH - *approaches the coffee machine*

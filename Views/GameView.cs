@@ -152,19 +152,18 @@ public class GameView : ContentPage
         {
             switch (setting)
             {
-                case "RevBack":
-                    NovellaScenario.CurrentBackground = value;
-                    NovellaScenario.CurrentLocation = value;
-                    BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
-                    break;
-                case "RevPers":
-                    NovellaScenario.CurrentPers = value;
-                    character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
-                    break;
+                case "Back":
+                    NovellaScenario.CurrentBackground = NovellaScenario.RevBackground;
+                    NovellaScenario.CurrentLocation = NovellaScenario.RevBackground;
+                    BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(NovellaScenario.RevBackground) as byte[]);
+                    return;
+                case "Pers":
+                    NovellaScenario.CurrentPers = NovellaScenario.RevPers;
+                    character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(NovellaScenario.RevPers) as byte[]);
+                    return;
                 default:
-                    break;
+                    return;
             }
-            return;
         }
         switch (setting)
         {
@@ -172,13 +171,13 @@ public class GameView : ContentPage
                 NovellaScenario.CurrentBackground = value;
                 NovellaScenario.CurrentLocation = value;
                 BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
-                break;
+                return;
             case "Pers":
                 NovellaScenario.CurrentPers = value;
                 character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
-                break;
+                return;
             default:
-                break;
+                return;
         }
     }
     private void GoBack()

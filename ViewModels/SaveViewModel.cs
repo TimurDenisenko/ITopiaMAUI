@@ -72,6 +72,26 @@ namespace ITopiaMAUI.ViewModels
                 OnPropertyChanged("CurrentPers");
             }
         }
+        public string RevBackground
+        {
+            get => Save.RevBackground ??= "None";
+            set
+            {
+                if (Save.RevBackground == value) return;
+                Save.RevBackground = value;
+                OnPropertyChanged("RevBackground");
+            }
+        }
+        public string RevPers
+        {
+            get => Save.RevPers ??= "None";
+            set
+            {
+                if (Save.RevPers == value) return;
+                Save.RevPers = value;
+                OnPropertyChanged("RevPers");
+            }
+        }
         public bool IsValid => new string[] { Name, PageNum == 0 ? string.Empty : "fill", Scenario }.Any(x => !string.IsNullOrEmpty(x?.Trim()));
 
         protected void OnPropertyChanged(string propName)

@@ -13,5 +13,7 @@ namespace ITopiaMAUI
         public string Scenario { get; set; }
         public string CurrentBackground { get; set; }
         public string CurrentPers {  get; set; }
+        public string RevBackground { get; set; }
+        public string RevPers { get; set; }
     }
 }
