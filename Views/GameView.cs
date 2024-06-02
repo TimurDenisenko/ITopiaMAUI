@@ -6,25 +6,13 @@ namespace ITopiaMAUI.Views;
 
 public class GameView : ContentPage
 {
-    Frame menuFrame;
-    Image character;
-    Label dialog, title;
-    StackLayout st;
+    private Frame menuFrame;
+    private readonly Image character;
+    private readonly Label dialog;
+    private readonly Label title;
+    private readonly StackLayout st;
     public GameView(SaveViewModel save = null)
     {
-        if (save == null)
-        {
-            DBNovellaScenario ns = App.Database.GetNovellaScenarios().ToArray()[0];
-            NovellaScenario.PageNum = 0;
-            NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(ns.Scenario);
-        }
-        else
-        {
-            NovellaScenario.PageNum = save.PageNum;
-            NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(save.Scenario);
-            Setting("Back",save.CurrentBackground);
-            Setting("Pers", save.CurrentPers);
-        }
         AbsoluteLayout mainLayout = new AbsoluteLayout
         {
             WidthRequest = 860,
@@ -99,10 +87,32 @@ public class GameView : ContentPage
         mainLayout.SetLayoutBounds(character, new Rect(0, 20, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(title, new Rect(mainLayout.WidthRequest/2-100, mainLayout.HeightRequest / 2 - 40, mainLayout.WidthRequest, mainLayout.HeightRequest));
         Content = mainLayout;
+        if (save == null)
+        {
+            DBNovellaScenario ns = App.Database.GetNovellaScenarios().ToArray()[0];
+            NovellaScenario.PageNum = 0;
+            NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(ns.Scenario);
+        }
+        else
+        {
+            NovellaScenario.PageNum = save.PageNum;
+            NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(save.Scenario);
+            Setting("Back", save.CurrentBackground);
+            Setting("Pers", save.CurrentPers);
+        }
         GeneratePage();
     }
     private async void GeneratePage()
     {
+        if (new string[] {"Back", "Pers"}.Any(x => NovellaScenario.Scenario[NovellaScenario.PageNum].Split(":")[0]==x))
+        {
+            string[] changes = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace(" ", "").Trim().Split('|');
+            for (int i = 0; i < changes.Length; i++)
+            {
+                Setting(changes[i].Split(":")[0], changes[i].Split(":")[1], true);
+            }
+            NovellaScenario.PageNum -= 2;
+        }
         Enum.TryParse(NovellaScenario.Scenario[NovellaScenario.PageNum].Trim(), out LineType currentLine);
         title.IsVisible = currentLine == LineType.Empty;
         Array.ForEach(new VisualElement[] { dialog, st, character }, x => x.IsVisible = !(currentLine == LineType.Empty));
@@ -136,8 +146,26 @@ public class GameView : ContentPage
             }
         }
     }
-    private void Setting(string setting, string value)
+    private void Setting(string setting, string value, bool rev = false)
     {
+        if (rev)
+        {
+            switch (setting)
+            {
+                case "RevBack":
+                    NovellaScenario.CurrentBackground = value;
+                    NovellaScenario.CurrentLocation = value;
+                    BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                    break;
+                case "RevPers":
+                    NovellaScenario.CurrentPers = value;
+                    character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                    break;
+                default:
+                    break;
+            }
+            return;
+        }
         switch (setting)
         {
             case "Back":

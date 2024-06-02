@@ -233,6 +233,8 @@ public class SettingView : ContentPage
                 Name = "test",
                 PageNum = NovellaScenario.PageNum,
                 Scenario = FileManage.SerializeToFile(NovellaScenario.Scenario),
+                CurrentBackground = NovellaScenario.CurrentBackground,
+                CurrentPers = NovellaScenario.CurrentPers,
             };
             if (new string[] { save.Name, save.PageNum == 0 ? string.Empty : "fill", save.Scenario }.All(x => !string.IsNullOrEmpty(x)))
             {

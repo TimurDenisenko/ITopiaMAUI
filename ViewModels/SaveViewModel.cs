@@ -14,7 +14,7 @@ namespace ITopiaMAUI.ViewModels
         }
         public SaveListViewModel SaveListViewModel
         {
-            get { return slvm; }
+            get => slvm; 
             set
             {
                 if (slvm == value) return;
@@ -24,7 +24,7 @@ namespace ITopiaMAUI.ViewModels
         }
         public int PageNum
         {
-            get { return Save.PageNum; }
+            get => Save.PageNum;
             set
             {
                 if (Save.PageNum == value) return;
@@ -34,7 +34,7 @@ namespace ITopiaMAUI.ViewModels
         }
         public string Name
         {
-            get { return Save.Name; }
+            get => Save.Name; 
             set
             {
                 if (Save.Name == value) return;
@@ -44,7 +44,7 @@ namespace ITopiaMAUI.ViewModels
         }
         public string Scenario
         {
-            get { return Save.Scenario; }
+            get => Save.Scenario; 
             set
             {
                 if (Save.Scenario == value) return;
@@ -54,7 +54,7 @@ namespace ITopiaMAUI.ViewModels
         }
         public string CurrentBackground
         {
-            get { return Save.CurrentBackground; }
+            get => Save.CurrentBackground ??= "None";
             set
             {
                 if (Save.CurrentBackground == value) return;
@@ -64,7 +64,7 @@ namespace ITopiaMAUI.ViewModels
         }
         public string CurrentPers
         {
-            get { return Save.CurrentPers; }
+            get => Save.CurrentPers ??= "None";
             set
             {
                 if (Save.CurrentPers == value) return;
@@ -72,13 +72,7 @@ namespace ITopiaMAUI.ViewModels
                 OnPropertyChanged("CurrentPers");
             }
         }
-        public bool IsValid
-        {
-            get
-            {
-                return new string[] { Name, PageNum == 0 ? string.Empty : "fill", Scenario }.Any(x => !string.IsNullOrEmpty(x?.Trim()));
-            }
-        }
+        public bool IsValid => new string[] { Name, PageNum == 0 ? string.Empty : "fill", Scenario }.Any(x => !string.IsNullOrEmpty(x?.Trim()));
 
         protected void OnPropertyChanged(string propName)
         {
