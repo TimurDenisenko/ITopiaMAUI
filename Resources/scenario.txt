@@ -23,6 +23,9 @@ MH - … … …
 MH - (First day and we have a lecture for about 4 hours. Now it has become soooo boring. Only after 2 hours is end)
 MH - … … …
 Teacher - …Now I am gonna explain you, some basics of C#. 
+Code
+Code: return System.Console.WriteLine();
+Wait: 1
 Setting
 Back: Caffeine
 MH - (Finally, a break! I need some caffeine.)

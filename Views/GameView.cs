@@ -1,6 +1,7 @@
 using ITopiaMAUI.Models;
 using ITopiaMAUI.ViewModels;
-using System.Threading.Channels;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace ITopiaMAUI.Views;
 
@@ -11,6 +12,7 @@ public class GameView : ContentPage
     private readonly Label dialog;
     private readonly Label title;
     private readonly StackLayout st;
+    private Entry codeEditor;
     public GameView(SaveViewModel save = null)
     {
         AbsoluteLayout mainLayout = new AbsoluteLayout
@@ -45,6 +47,17 @@ public class GameView : ContentPage
             FontSize = 15,
             TextColor = Colors.Black,
         };
+        codeEditor = new Entry
+        {
+            HeightRequest = 270,
+            WidthRequest = 500,
+            FontSize = 15,
+            TextColor = Colors.Black,
+            IsVisible = false,
+            BackgroundColor = Colors.White, 
+            VerticalTextAlignment = TextAlignment.Start,
+        };
+        codeEditor.Completed+=CodeEditor_Completed;
         st = new StackLayout { 
             Children = 
             {
@@ -78,7 +91,7 @@ public class GameView : ContentPage
             FontSize = 60,
             TextColor = Colors.White,
         };
-        AddRange(mainLayout,menu, character, st,dialog,back,forward, title);
+        AddRange(mainLayout,menu, character, st,dialog,back,forward, title, codeEditor);
         mainLayout.SetLayoutBounds(menu,new Rect(-360, -150, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(dialog, new Rect(10, 135, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(st, new Rect(0, 260, mainLayout.WidthRequest, mainLayout.HeightRequest));
@@ -86,6 +99,7 @@ public class GameView : ContentPage
         mainLayout.SetLayoutBounds(forward, new Rect(215, 250, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(character, new Rect(0, 20, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(title, new Rect(mainLayout.WidthRequest/2-100, mainLayout.HeightRequest / 2 - 40, mainLayout.WidthRequest, mainLayout.HeightRequest));
+        mainLayout.SetLayoutBounds(codeEditor, new Rect(0, -50, mainLayout.WidthRequest, mainLayout.HeightRequest));
         Content = mainLayout;
         if (save == null)
         {
@@ -102,6 +116,20 @@ public class GameView : ContentPage
         }
         GeneratePage();
     }
+
+    private async void CodeEditor_Completed(object sender, EventArgs e)
+    {
+        try
+        {
+            ScriptState result = await CSharpScript.RunAsync(codeEditor.Text);
+            await DisplayAlert("Edu!", result.ReturnValue.ToString(), "Tühista");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Viga", ex.Message, "Tühista");
+        }
+    }
+
     private async void GeneratePage()
     {
         if (new string[] {"Back", "Pers"}.Any(x => NovellaScenario.Scenario[NovellaScenario.PageNum].Split(":")[0]==x))
@@ -109,7 +137,7 @@ public class GameView : ContentPage
             string[] changes = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace(" ", "").Trim().Split('|');
             for (int i = 0; i < changes.Length; i++)
             {
-                Setting(changes[i].Split(":")[0], changes[i].Split(":")[1], true);
+                RevSetting(changes[i].Split(":")[0]);
             }
             NovellaScenario.PageNum -= 2;
         }
@@ -131,11 +159,20 @@ public class GameView : ContentPage
             ++NovellaScenario.PageNum;
             BackgroundColor = Colors.Black;
             BackgroundImageSource = null;
-            NovellaScenario.CurrentLocation = "none";
+            NovellaScenario.CurrentBackground = "none";
             title.Text = NovellaScenario.Scenario[NovellaScenario.PageNum];
+        }
+        else if (currentLine == LineType.Code)
+        {
+
+        }
+        else if (NovellaScenario.Scenario[NovellaScenario.PageNum].Split("-").Length != 2 && NovellaScenario.PageNum != 0)
+        {
+            GoBack();
         }
         else
         {
+            codeEditor.IsVisible = true;
             dialog.Text = string.Empty;
             if (NovellaScenario.Scenario[NovellaScenario.PageNum].Contains("[player]"))
                 NovellaScenario.Scenario[NovellaScenario.PageNum] = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace("[player]", NovellaScenario.Name);
@@ -146,35 +183,35 @@ public class GameView : ContentPage
             }
         }
     }
-    private void Setting(string setting, string value, bool rev = false)
+    private void Setting(string setting, string value)
     {
-        if (rev)
-        {
-            switch (setting)
-            {
-                case "Back":
-                    NovellaScenario.CurrentBackground = NovellaScenario.RevBackground;
-                    NovellaScenario.CurrentLocation = NovellaScenario.RevBackground;
-                    BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(NovellaScenario.RevBackground) as byte[]);
-                    return;
-                case "Pers":
-                    NovellaScenario.CurrentPers = NovellaScenario.RevPers;
-                    character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(NovellaScenario.RevPers) as byte[]);
-                    return;
-                default:
-                    return;
-            }
-        }
         switch (setting)
         {
             case "Back":
+                NovellaScenario.RevBackground = NovellaScenario.CurrentBackground ??= "None";
                 NovellaScenario.CurrentBackground = value;
-                NovellaScenario.CurrentLocation = value;
-                BackgroundImageSource = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                BackgroundImageSource = FileManage.ConvertToImageSource(value);
                 return;
             case "Pers":
+                NovellaScenario.RevPers = NovellaScenario.CurrentPers ??= "None";
                 NovellaScenario.CurrentPers = value;
-                character.Source = FileManage.ConvertToImageSource(Properties.Resources.ResourceManager.GetObject(value) as byte[]);
+                character.Source = FileManage.ConvertToImageSource(value);
+                return;
+            default:
+                return;
+        }
+    }
+    private void RevSetting(string setting)
+    {
+        switch (setting)
+        {
+            case "Back":
+                NovellaScenario.CurrentBackground = NovellaScenario.RevBackground ??= "None";
+                BackgroundImageSource = FileManage.ConvertToImageSource(NovellaScenario.RevBackground);
+                return;
+            case "Pers":
+                NovellaScenario.CurrentPers = NovellaScenario.RevPers ??= "None";
+                character.Source = FileManage.ConvertToImageSource(NovellaScenario.RevPers);
                 return;
             default:
                 return;

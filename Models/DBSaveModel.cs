@@ -4,7 +4,7 @@ using SQLite;
 namespace ITopiaMAUI
 {
     [Table("SaveTable")]
-    public class DBSaveModel
+    public partial class DBSaveModel
     {
         [PrimaryKey,AutoIncrement]
         public int ID { get; set; }
@@ -15,5 +15,20 @@ namespace ITopiaMAUI
         public string CurrentPers {  get; set; }
         public string RevBackground { get; set; }
         public string RevPers { get; set; }
+    }
+    public partial class DBSaveModel
+    {
+        public DBSaveModel() { }
+        public DBSaveModel(DBSaveModel save)
+        {
+            ID = save.ID;
+            PageNum = save.PageNum;
+            Name = save.Name;
+            Scenario = save.Scenario;
+            CurrentBackground = save.CurrentBackground;
+            CurrentPers = save.CurrentPers;
+            RevBackground = save.RevBackground;
+            RevPers = save.RevPers;
+        }
     }
 }

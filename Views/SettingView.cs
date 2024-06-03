@@ -1,18 +1,21 @@
 using ITopiaMAUI.Models;
 using ITopiaMAUI.ViewModels;
-
 namespace ITopiaMAUI.Views;
 
 public class SettingView : ContentPage
 {
     private static TaskCompletionSource<bool> tcs;
+    private static DBSaveModel selectedItem;
+    private readonly Entry name;
+    private readonly Button load, delete, cancel, save, exit;
+    private readonly ListView saves;
     public SettingView()
     {
         StackLayout settingLayout = new StackLayout
         {
             BackgroundColor = Colors.Black,
         };
-        Entry name = new Entry
+        name = new Entry
         {
             HorizontalOptions = LayoutOptions.Center,
             WidthRequest = 400,
@@ -21,6 +24,7 @@ public class SettingView : ContentPage
             PlaceholderColor = Colors.Gray,
             Placeholder = "Nimi...",
         };
+        name.Completed += (s, e) => StartGame();
         ImageButton ok = new ImageButton
         {
             Source = FileManage.ConvertToImageSource(Properties.Resources.ok),
@@ -28,18 +32,19 @@ public class SettingView : ContentPage
             HeightRequest = 25,
             Margin= new Thickness(20, 0, 0, 0),
         };
-        ok.Clicked += async (s, e) =>
-        {
-            if (name.Text==string.Empty || name.Text.All(char.IsAsciiLetter))
-            {
-                await DisplayAlert("Viga", "Nimi on tühi või sisaldab keelatud tähemärke", "Tühista");
-                return;
-            }
-            NovellaScenario.Name = name.Text;
-            await Navigation.PushAsync(new GameView());
-        };
+        ok.Clicked += (s, e) => StartGame();
         AddRange(settingLayout, new HorizontalStackLayout { Children = { name, ok }, HorizontalOptions = LayoutOptions.Center, Margin = new Thickness(0, 140, 0, 0), });
         Content = settingLayout;
+    }
+    private async void StartGame()
+    {
+        if (name.Text==string.Empty || !name.Text.All(char.IsAsciiLetter))
+        {
+            await DisplayAlert("Viga", "Nimi on tühi või sisaldab keelatud tähemärke", "Tühista");
+            return;
+        }
+        NovellaScenario.Name = name.Text;
+        Application.Current.MainPage = new GameView();
     }
     protected override void OnAppearing()
     {
@@ -188,6 +193,18 @@ public class SettingView : ContentPage
             HeightRequest = 25,
             HorizontalOptions = LayoutOptions.Start,
         };
+        Button load = new Button
+        {
+            Text = "Laadi",
+        };
+        Button delete = new Button
+        {
+            Text = "Kustuta",
+        };
+        Button cancel = new Button
+        {
+            Text = "Tühista",
+        };
         exit.Clicked += (s, e) =>
         {
             templateFrame.IsVisible = false;
@@ -198,15 +215,22 @@ public class SettingView : ContentPage
             ItemsSource = App.Database.GetSaves(),
             ItemTemplate = new DataTemplate(() =>
             {
-                Label name = new Label { TextColor = Color.FromRgb(255, 159, 104) };
-                Label num = new Label { TextColor = Color.FromRgb(255, 159, 104) };
-                name.SetBinding(Label.TextProperty, "Scenario");
+                Label name = new Label { TextColor = Colors.White };
+                Label back = new Label { TextColor = Colors.White };
+                Label num = new Label { TextColor = Colors.White };
+                name.SetBinding(Label.TextProperty, "Name");
+                back.SetBinding(Label.TextProperty, "CurrentBackground");
                 num.SetBinding(Label.TextProperty, "PageNum");
                 return new ViewCell
                 {
-                    View = new VerticalStackLayout
+                    View = new HorizontalStackLayout
                     {
-                        Children = { name,num }
+                        Children = { 
+                            new Label { Text = "Nimi: ",TextColor = Color.FromRgb(255, 159, 104) }, name,
+                            new Label { Text = " Taust: ", TextColor = Color.FromRgb(255, 159, 104) }, back,
+                            new Label { Text = " Lehekülje number: ", TextColor = Color.FromRgb(255, 159, 104) }, num
+                        },
+                        HeightRequest = 25,
                     }
                 };
             }),
@@ -214,33 +238,55 @@ public class SettingView : ContentPage
             HeightRequest = 150,
             Margin = new Thickness(30,0,0,0),
         };
-        saves.ItemSelected += (s, e) =>
-        {
-            Application.Current.MainPage = new GameView(new SaveViewModel { Save = (DBSaveModel)e.SelectedItem } );
-        };
         Button save = new Button
         {
             Text = "Salvesta",
             BorderColor = Colors.Black,
-            TextColor = Color.FromRgb(255, 159, 104),
-            FontSize = 25,
-            BackgroundColor = Color.FromRgb(124, 32, 58),
         };
+        foreach (Button item in new Button[] { load, delete, cancel, save })
+        {
+            item.TextColor = Color.FromRgb(255, 159, 104);
+            item.FontSize = 25;
+            item.BackgroundColor = Color.FromRgb(124, 32, 58);
+        }
         save.Clicked += (s, e) =>
         {
             DBSaveModel save = new DBSaveModel 
             { 
-                Name = "test",
+                Name = NovellaScenario.Name,
                 PageNum = NovellaScenario.PageNum,
                 Scenario = FileManage.SerializeToFile(NovellaScenario.Scenario),
                 CurrentBackground = NovellaScenario.CurrentBackground,
                 CurrentPers = NovellaScenario.CurrentPers,
+                RevBackground = NovellaScenario.RevBackground,
+                RevPers = NovellaScenario.RevPers,
             };
             if (new string[] { save.Name, save.PageNum == 0 ? string.Empty : "fill", save.Scenario }.All(x => !string.IsNullOrEmpty(x)))
             {
                 App.Database.SaveSave(save);
                 saves.ItemsSource = App.Database.GetSaves();
             }
+        };
+        saves.ItemSelected += (s, e) =>
+        {
+            selectedItem = new DBSaveModel((DBSaveModel)e.SelectedItem);
+            st.Clear();
+            AddRange(st, load, delete, cancel);
+            saves.ItemsSource = App.Database.GetSaves();
+        };
+        load.Clicked += (s, e) => Application.Current.MainPage = new GameView(new SaveViewModel { Save = selectedItem });
+        delete.Clicked += (s, e) =>
+        {
+            App.Database.DeleteSave(selectedItem.ID);
+            st.Clear();
+            AddRange(st, exit, saves, save);
+            saves.ItemsSource = App.Database.GetSaves();
+        };
+        cancel.Clicked += (s, e) =>
+        {
+            st.Clear();
+            AddRange(st, exit, saves, save);
+            saves.ItemsSource = App.Database.GetSaves();
         };
         AddRange(st, exit, saves, save);
         return templateFrame;
