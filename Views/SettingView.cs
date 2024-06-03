@@ -74,7 +74,7 @@ public class SettingView : ContentPage
 		{
 			Minimum = 0,
 			Maximum = 100,
-			Value = 75,
+			Value = GameSetting.Volume,
 			ThumbColor = Colors.White,	
 			MinimumTrackColor = Colors.White,
 			WidthRequest = 400,
@@ -90,8 +90,8 @@ public class SettingView : ContentPage
         Slider textSpeed = new Slider
         {
             Minimum = 0,
-            Maximum = 100,
-            Value = 75,
+            Maximum = 50,
+            Value = GameSetting.TextSpeed,
             ThumbColor = Colors.White,
             MinimumTrackColor = Colors.White,
             WidthRequest = 400,

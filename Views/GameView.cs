@@ -9,10 +9,11 @@ public class GameView : ContentPage
 {
     private Frame menuFrame;
     private readonly Image character;
-    private readonly Label dialog;
-    private readonly Label title;
+    private readonly Label dialog, title;
     private readonly StackLayout st;
     private Entry codeEditor;
+    private Button forward, back;
+    private Script script;
     public GameView(SaveViewModel save = null)
     {
         AbsoluteLayout mainLayout = new AbsoluteLayout
@@ -72,14 +73,14 @@ public class GameView : ContentPage
             },
             Opacity = 0.7
         };
-        Button back = new Button
+        back = new Button
         {
             WidthRequest = 430,
             BackgroundColor = Colors.Transparent,
             CornerRadius = 25,
         };
         back.Clicked += (s, e) => GoBack();
-        Button forward = new Button
+        forward = new Button
         {
             WidthRequest = 400,
             BackgroundColor = Colors.Transparent,
@@ -119,14 +120,36 @@ public class GameView : ContentPage
 
     private async void CodeEditor_Completed(object sender, EventArgs e)
     {
+        script = CSharpScript.Create(codeEditor.Text);
         try
         {
-            ScriptState result = await CSharpScript.RunAsync(codeEditor.Text);
-            await DisplayAlert("Edu!", result.ReturnValue.ToString(), "T�hista");
+            ScriptState result = await script.RunAsync();
+            await DisplayAlert("Edu", "Kood koostatud. Tagastusväärtus: "+result.ReturnValue, "Tühista");
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Viga", ex.Message, "T�hista");
+            await DisplayAlert("Viga", ex.Message, "Tühista");
+        }
+    }
+    private async void Test(string test, string wait)
+    {
+        try
+        {
+            ScriptState result = await script.ContinueWith(test).RunAsync();
+            if ((string)result.ReturnValue != wait)
+            {
+                await DisplayAlert("Ebaõnnestumine", "Eeldatav: "+wait+ " Tagastatud: "+result.ReturnValue, "Tühista");
+            }
+            NovellaScenario.PageNum++;
+            if (NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[0].Trim() == "Test")
+            {
+                Test(NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[1].Trim(), 
+                    NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[1].Split(':')[1].Trim());
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Viga", ex.Message, "Tühista");
         }
     }
 
@@ -143,7 +166,8 @@ public class GameView : ContentPage
         }
         Enum.TryParse(NovellaScenario.Scenario[NovellaScenario.PageNum].Trim(), out LineType currentLine);
         title.IsVisible = currentLine == LineType.Empty;
-        Array.ForEach(new VisualElement[] { dialog, st, character }, x => x.IsVisible = !(currentLine == LineType.Empty));
+        codeEditor.IsVisible = currentLine == LineType.Code;
+        Array.ForEach(new VisualElement[] { dialog, st, character }, x => x.IsVisible = !(currentLine == LineType.Empty) || !(currentLine==LineType.Code));
         if (currentLine == LineType.Setting)
         {
             ++NovellaScenario.PageNum;
@@ -164,7 +188,8 @@ public class GameView : ContentPage
         }
         else if (currentLine == LineType.Code)
         {
-
+            NovellaScenario.PageNum++;
+            codeEditor.Text = NovellaScenario.Scenario[NovellaScenario.PageNum];
         }
         else if (NovellaScenario.Scenario[NovellaScenario.PageNum].Split("-").Length != 2 && NovellaScenario.PageNum != 0)
         {
@@ -172,15 +197,18 @@ public class GameView : ContentPage
         }
         else
         {
-            codeEditor.IsVisible = true;
             dialog.Text = string.Empty;
             if (NovellaScenario.Scenario[NovellaScenario.PageNum].Contains("[player]"))
                 NovellaScenario.Scenario[NovellaScenario.PageNum] = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace("[player]", NovellaScenario.Name);
+            forward.IsEnabled = false;
+            back.IsEnabled = false;
             foreach (char item in NovellaScenario.Scenario[NovellaScenario.PageNum])
             {
                 dialog.Text += item;
-                await Task.Delay(10);
+                await Task.Delay(GameSetting.TextSpeed);
             }
+            forward.IsEnabled = true;
+            back.IsEnabled = true;
         }
     }
     private void Setting(string setting, string value)
