@@ -22,12 +22,12 @@ MH - (She ran to her classroom so fast, I think she was already late when we met
 MH - … … …
 MH - (First day and we have a lecture for about 4 hours. Now it has become soooo boring. Only after 2 hours is end)
 MH - … … …
-Teacher - …Now I am gonna explain you, some basics of C#. 
+Teacher - …Now I am gonna explain you, some basics of C#.
 Code
-int Sum() \n{\n}\nreturn Test();
-Test: return Test(5,4) | Wait: 9
-Test: return Test(1,3) | Wait: 4
-Test: return Test(2,9) | Wait: 11
+int Sum() { } return Sum();
+Test: return Sum(5,4); | Wait: 9
+Test: return Sum(1,3); | Wait: 4
+Test: return Sum(2,9); | Wait: 11
 Setting
 Back: Caffeine
 MH - (Finally, a break! I need some caffeine.)

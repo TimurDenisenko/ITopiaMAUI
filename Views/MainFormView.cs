@@ -14,7 +14,10 @@ public partial class MainFormView : ContentPage
         Label title2 = new Label { Text = "opia", TextColor = Colors.Orange, FontSize = 60 };
         AddRange(title1, title2);
         Button new_game = new Button { Text = "Uus mäng" };
-        new_game.Clicked += (s, e) => Application.Current.MainPage = new SettingView(); 
+        new_game.Clicked += (s, e) =>
+        {
+            Application.Current.MainPage = new SettingView();
+        };
         Button continue_game = new Button { Text = "Jätka" };
         Button setting = new Button { Text = "Sätted" };
         Button exit = new Button { Text = "Välju" };
@@ -50,5 +53,12 @@ public partial class MainFormView : ContentPage
         layout.SetLayoutBounds(exit, new Rect(430, 260, layout.Width, layout.Height));
         Content = layout;
     }
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        NovellaScenario.MusicPlayer = new AudioManage();
+        await Task.Run(() => NovellaScenario.MusicPlayer.PlayMusic());
+    }
+
     private void AddRange(params IView[] views) => Array.ForEach(views, layout.Add);
 }

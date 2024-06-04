@@ -2,6 +2,7 @@ using ITopiaMAUI.Models;
 using ITopiaMAUI.ViewModels;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Plugin.Maui.Audio;
 
 namespace ITopiaMAUI.Views;
 
@@ -14,6 +15,7 @@ public class GameView : ContentPage
     private Entry codeEditor;
     private Button forward, back;
     private Script script;
+    private readonly IAudioManager audioManager;
     public GameView(SaveViewModel save = null)
     {
         AbsoluteLayout mainLayout = new AbsoluteLayout
@@ -24,7 +26,7 @@ public class GameView : ContentPage
         ImageButton menu = new ImageButton
         {
             Source = FileManage.ConvertToImageSource(Properties.Resources.menu),
-            WidthRequest = 40, 
+            WidthRequest = 40,
             HeightRequest = 40,
         };
         menu.Clicked += (s, e) =>
@@ -38,9 +40,7 @@ public class GameView : ContentPage
             }
             menuFrame.IsVisible = false;
         };
-        character = new Image
-        {
-        };
+        character = new Image();
         dialog = new Label
         {
             HeightRequest = 80,
@@ -55,12 +55,13 @@ public class GameView : ContentPage
             FontSize = 15,
             TextColor = Colors.Black,
             IsVisible = false,
-            BackgroundColor = Colors.White, 
+            BackgroundColor = Colors.White,
             VerticalTextAlignment = TextAlignment.Start,
         };
-        codeEditor.Completed+=CodeEditor_Completed;
-        st = new StackLayout { 
-            Children = 
+        codeEditor.Completed += CodeEditor_Completed;
+        st = new StackLayout
+        {
+            Children =
             {
                 new Frame
                 {
@@ -92,14 +93,14 @@ public class GameView : ContentPage
             FontSize = 60,
             TextColor = Colors.White,
         };
-        AddRange(mainLayout,menu, character, st,dialog,back,forward, title, codeEditor);
-        mainLayout.SetLayoutBounds(menu,new Rect(-360, -150, mainLayout.WidthRequest, mainLayout.HeightRequest));
+        AddRange(mainLayout, menu, character, st, dialog, back, forward, title, codeEditor);
+        mainLayout.SetLayoutBounds(menu, new Rect(-360, -150, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(dialog, new Rect(10, 135, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(st, new Rect(0, 260, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(back, new Rect(-215, 250, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(forward, new Rect(215, 250, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(character, new Rect(0, 20, mainLayout.WidthRequest, mainLayout.HeightRequest));
-        mainLayout.SetLayoutBounds(title, new Rect(mainLayout.WidthRequest/2-100, mainLayout.HeightRequest / 2 - 40, mainLayout.WidthRequest, mainLayout.HeightRequest));
+        mainLayout.SetLayoutBounds(title, new Rect(mainLayout.WidthRequest / 2 - 100, mainLayout.HeightRequest / 2 - 40, mainLayout.WidthRequest, mainLayout.HeightRequest));
         mainLayout.SetLayoutBounds(codeEditor, new Rect(0, -50, mainLayout.WidthRequest, mainLayout.HeightRequest));
         Content = mainLayout;
         if (save == null)
@@ -115,42 +116,8 @@ public class GameView : ContentPage
             Setting("Back", save.CurrentBackground);
             Setting("Pers", save.CurrentPers);
         }
-        GeneratePage();
-    }
 
-    private async void CodeEditor_Completed(object sender, EventArgs e)
-    {
-        script = CSharpScript.Create(codeEditor.Text);
-        try
-        {
-            ScriptState result = await script.RunAsync();
-            await DisplayAlert("Edu", "Kood koostatud. Tagastusväärtus: "+result.ReturnValue, "Tühista");
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Viga", ex.Message, "Tühista");
-        }
-    }
-    private async void Test(string test, string wait)
-    {
-        try
-        {
-            ScriptState result = await script.ContinueWith(test).RunAsync();
-            if ((string)result.ReturnValue != wait)
-            {
-                await DisplayAlert("Ebaõnnestumine", "Eeldatav: "+wait+ " Tagastatud: "+result.ReturnValue, "Tühista");
-            }
-            NovellaScenario.PageNum++;
-            if (NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[0].Trim() == "Test")
-            {
-                Test(NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[1].Trim(), 
-                    NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[1].Split(':')[1].Trim());
-            }
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Viga", ex.Message, "Tühista");
-        }
+        GeneratePage();
     }
 
     private async void GeneratePage()
@@ -167,7 +134,8 @@ public class GameView : ContentPage
         Enum.TryParse(NovellaScenario.Scenario[NovellaScenario.PageNum].Trim(), out LineType currentLine);
         title.IsVisible = currentLine == LineType.Empty;
         codeEditor.IsVisible = currentLine == LineType.Code;
-        Array.ForEach(new VisualElement[] { dialog, st, character }, x => x.IsVisible = !(currentLine == LineType.Empty) || !(currentLine==LineType.Code));
+        forward.IsEnabled = !(currentLine == LineType.Code);
+        Array.ForEach(new VisualElement[] { dialog, st, character }, x => x.IsVisible = !(currentLine == LineType.Empty));
         if (currentLine == LineType.Setting)
         {
             ++NovellaScenario.PageNum;
@@ -195,6 +163,11 @@ public class GameView : ContentPage
         {
             GoBack();
         }
+        else if (NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[0].Trim() == "Test")
+        {
+            NovellaScenario.PageNum = NovellaScenario.TestNum - 3;
+            GoBack();
+        }
         else
         {
             dialog.Text = string.Empty;
@@ -205,10 +178,56 @@ public class GameView : ContentPage
             foreach (char item in NovellaScenario.Scenario[NovellaScenario.PageNum])
             {
                 dialog.Text += item;
-                await Task.Delay(GameSetting.TextSpeed);
+                await Task.Delay(NovellaScenario.TextSpeed);
             }
             forward.IsEnabled = true;
             back.IsEnabled = true;
+        }
+    }
+    private async void CodeEditor_Completed(object sender, EventArgs e)
+    {
+        script = CSharpScript.Create(codeEditor.Text);
+        try
+        {
+            ScriptState result = await script.RunAsync();
+            await DisplayAlert("Edu", "Kood koostatud. Tagastusväärtus: " + result?.ReturnValue ?? "null", "Tühista");
+            NovellaScenario.TestNum = NovellaScenario.PageNum + 1;
+            Test();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Viga", ex.Message, "Tühista");
+        }
+    }
+    private async void Test(string test = null, string wait = null)
+    {
+        if (test==null || wait==null)
+        {
+            NovellaScenario.PageNum++;
+            if (NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[0].Trim() == "Test")
+                Test(NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[0].Split(':')[1].Trim(),
+                    NovellaScenario.Scenario[NovellaScenario.PageNum].Split('|')[1].Split(':')[1].Trim());
+            else
+            {
+                await DisplayAlert("Edu", "Kõik testid läbisid edukalt", "Tühista");
+                GeneratePage();
+            }
+            return;
+        }
+        try
+        {
+            ScriptState result = await script.ContinueWith(test).RunAsync();
+            if (result.ReturnValue.ToString() != wait)
+            {
+                await DisplayAlert("Ebaõnnestumine", "Eeldatav: " + wait + " Tagastatud: " + result.ReturnValue, "Tühista");
+                NovellaScenario.PageNum = NovellaScenario.TestNum - 1;
+                return;
+            }
+            Test();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Viga", ex.Message, "Tühista");
         }
     }
     private void Setting(string setting, string value)
@@ -247,6 +266,8 @@ public class GameView : ContentPage
     }
     private void GoBack()
     {
+        if (NovellaScenario.Scenario[NovellaScenario.PageNum+1].Split('|')[0].Split(':')[0].Trim() == "Test")
+            NovellaScenario.PageNum-=2;
         --NovellaScenario.PageNum;
         GeneratePage();
     }

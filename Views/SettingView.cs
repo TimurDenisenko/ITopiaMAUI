@@ -7,8 +7,6 @@ public class SettingView : ContentPage
     private static TaskCompletionSource<bool> tcs;
     private static DBSaveModel selectedItem;
     private readonly Entry name;
-    private readonly Button load, delete, cancel, save, exit;
-    private readonly ListView saves;
     public SettingView()
     {
         StackLayout settingLayout = new StackLayout
@@ -74,13 +72,20 @@ public class SettingView : ContentPage
 		{
 			Minimum = 0,
 			Maximum = 100,
-			Value = GameSetting.Volume,
+			Value = AudioManage.Volume,
 			ThumbColor = Colors.White,	
 			MinimumTrackColor = Colors.White,
 			WidthRequest = 400,
 			VerticalOptions = LayoutOptions.Center,
 		};
-		volume.ValueChanged += (s, e) => GameSetting.Volume = (float)e.NewValue;
+        volume.ValueChanged += async (s, e) =>
+        {
+            volume.IsEnabled = false;
+            AudioManage.Volume = (double)e.NewValue;
+            NovellaScenario.MusicPlayer.Reload();
+            await Task.Delay(100);
+            volume.IsEnabled = true;
+        };
         Label textSpeedLabel = new Label
         {
             Text = "Teksti väli-\nmuse kiirus",
@@ -91,13 +96,13 @@ public class SettingView : ContentPage
         {
             Minimum = 0,
             Maximum = 50,
-            Value = GameSetting.TextSpeed,
+            Value = NovellaScenario.TextSpeed,
             ThumbColor = Colors.White,
             MinimumTrackColor = Colors.White,
             WidthRequest = 400,
             VerticalOptions = LayoutOptions.Center,
         };
-        textSpeed.ValueChanged += (s, e) => GameSetting.TextSpeed = (int)e.NewValue;
+        textSpeed.ValueChanged += (s, e) => NovellaScenario.TextSpeed = (int)e.NewValue;
         ImageButton btn = new ImageButton
         {
             Source = FileManage.ConvertToImageSource(Properties.Resources.exit),
