@@ -6,6 +6,7 @@ namespace ITopiaMAUI.Models
     {
         public static double Volume { get; set; }
         public IAudioPlayer Player { get; set; }
+        public bool IsPausing { get; set; }
         private List<MemoryStream> music = new List<MemoryStream>();
         public AudioManage(byte[] sound)
         {
@@ -15,12 +16,13 @@ namespace ITopiaMAUI.Models
         }
         public AudioManage()
         {
+            loadMusic();
             Volume = 75;
         }
         public void Play()
         {
             Player.Volume = Volume / 100;
-            Player.Pause();
+            Player.Play();
         }
         private void loadMusic()
         {
@@ -31,7 +33,6 @@ namespace ITopiaMAUI.Models
         }
         public Task PlayMusic()
         {
-            loadMusic();
             while (true)
             {
                 foreach (MemoryStream item in music)
@@ -39,17 +40,19 @@ namespace ITopiaMAUI.Models
                     if (!Player?.IsPlaying ?? true)
                     {
                         Player = new AudioManager().CreatePlayer(item);
-                        Player.Volume = Volume / 100;
                         Play();
                     }
                 }
             }
         }
-        public void Reload()
+        public async Task ReloadAsync()
         {
-            Pause();
-            Play();
+            Player.Stop();
+            await Task.Run(NovellaScenario.MusicPlayer.PlayMusic);
         }
-        public void Pause() => Player.Pause();
+        public void Pause()
+        {
+            Player.Pause();
+        }
     }
 }

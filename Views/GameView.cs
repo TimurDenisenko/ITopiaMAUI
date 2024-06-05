@@ -12,10 +12,9 @@ public class GameView : ContentPage
     private readonly Image character;
     private readonly Label dialog, title;
     private readonly StackLayout st;
-    private Entry codeEditor;
-    private Button forward, back;
+    private readonly Entry codeEditor;
+    private readonly Button forward, back;
     private Script script;
-    private readonly IAudioManager audioManager;
     public GameView(SaveViewModel save = null)
     {
         AbsoluteLayout mainLayout = new AbsoluteLayout
