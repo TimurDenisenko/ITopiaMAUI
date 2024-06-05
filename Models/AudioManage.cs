@@ -31,24 +31,19 @@ namespace ITopiaMAUI.Models
                 music.Add(new MemoryStream(Properties.Resources.ResourceManager.GetObject("music" + i) as byte[]));
             }
         }
-        public Task PlayMusic()
+        public void PlayMusic()
         {
-            while (true)
+            if (!Player?.IsPlaying ?? true)
             {
-                foreach (MemoryStream item in music)
-                {
-                    if (!Player?.IsPlaying ?? true)
-                    {
-                        Player = new AudioManager().CreatePlayer(item);
-                        Play();
-                    }
-                }
+                Player = new AudioManager().CreatePlayer(music[new Random().Next(8)]);
+                Player.PlaybackEnded+=async(s, e) => await Task.Run(() => NovellaScenario.MusicPlayer.PlayMusic());
+                Play();
             }
         }
-        public async Task ReloadAsync()
+        public void ReloadAsync()
         {
-            Player.Stop();
-            await Task.Run(NovellaScenario.MusicPlayer.PlayMusic);
+            Player.Pause();
+            Play();
         }
         public void Pause()
         {

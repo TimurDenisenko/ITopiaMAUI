@@ -80,11 +80,8 @@ public class SettingView : ContentPage
 		};
         volume.ValueChanged += async (s, e) =>
         {
-            volume.IsEnabled = false;
             AudioManage.Volume = (double)e.NewValue;
             NovellaScenario.MusicPlayer.ReloadAsync();
-            await Task.Delay(1000);
-            volume.IsEnabled = true;
         };
         Label textSpeedLabel = new Label
         {

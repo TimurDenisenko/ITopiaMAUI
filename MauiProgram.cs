@@ -1,4 +1,5 @@
 ﻿using ITopiaMAUI.Models;
+using ITopiaMAUI.Views;
 using Plugin.Maui.Audio;
 
 namespace ITopiaMAUI;
