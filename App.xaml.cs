@@ -17,12 +17,6 @@ public partial class App : Application
     }
     public App()
     {
-        Database.SaveNovellaScenario(new DBNovellaScenario
-        {
-            Author = "Timur Denisenko",
-            Name = "ITopia",
-            Scenario = FileManage.SerializeToFile(ITopiaMAUI.Properties.Resources.scenario.Split('\n'))
-        });
         MainPage = new Shell { CurrentItem = new MainFormView()};
 	}
 }
