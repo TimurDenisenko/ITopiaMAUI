@@ -23,6 +23,16 @@ namespace ITopiaMAUI.ViewModels
                 OnPropertyChanged("NovellaScenarioListViewModel");
             }
         }
+        public string Name
+        {
+            get { return NovellaScenario.Name; }
+            set
+            {
+                if (NovellaScenario.Name == value) return;
+                NovellaScenario.Name = value;
+                OnPropertyChanged("Name");
+            }
+        }
         public string Scenario
         {
             get { return NovellaScenario.Scenario; }

@@ -81,6 +81,15 @@
 	  </EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="Views\DBNovellaScenarioListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\DBNovellaScenarioPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionITopiaMAUIHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

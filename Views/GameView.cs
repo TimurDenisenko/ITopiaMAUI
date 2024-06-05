@@ -12,7 +12,7 @@ public class GameView : ContentPage
     private readonly Image character;
     private readonly Label dialog, title;
     private readonly StackLayout st;
-    private readonly Entry codeEditor;
+    private readonly Editor codeEditor;
     private readonly Button forward, back;
     private Script script;
     public GameView(SaveViewModel save = null)
@@ -47,7 +47,7 @@ public class GameView : ContentPage
             FontSize = 15,
             TextColor = Colors.Black,
         };
-        codeEditor = new Entry
+        codeEditor = new Editor
         {
             HeightRequest = 270,
             WidthRequest = 500,

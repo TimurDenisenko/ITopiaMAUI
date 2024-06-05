@@ -78,7 +78,7 @@ public class SettingView : ContentPage
 			WidthRequest = 400,
 			VerticalOptions = LayoutOptions.Center,
 		};
-        volume.ValueChanged += async (s, e) =>
+        volume.ValueChanged += (s, e) =>
         {
             AudioManage.Volume = (double)e.NewValue;
             NovellaScenario.MusicPlayer.ReloadAsync();
@@ -108,10 +108,20 @@ public class SettingView : ContentPage
             HorizontalOptions = LayoutOptions.Start,
             Padding = new Thickness(0, 0, 0, 0)
         };
+        Button addScenario = new Button
+        {
+            Text = "Loo stsenaarium",
+            WidthRequest = 500,
+            BackgroundColor = Colors.Transparent,
+            TextColor = Color.FromRgb(255, 159, 104),
+            FontSize = 25,
+        };
+        addScenario.Clicked+=(s,e)=> Application.Current.MainPage = new DBNovellaScenarioListPage();
         AddRange(st,
             new HorizontalStackLayout { Children = { btn, settingLabel } },
             new HorizontalStackLayout { Children = { volumeLabel, volume }, Padding = 20 },
-			new HorizontalStackLayout { Children = { textSpeedLabel, textSpeed }, Padding = 20 });
+			new HorizontalStackLayout { Children = { textSpeedLabel, textSpeed }, Padding = 20 }, 
+            addScenario);
 		Frame templateFrame = new Frame
         {
             Content = st,

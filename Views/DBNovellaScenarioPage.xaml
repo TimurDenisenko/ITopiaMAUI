@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ITopiaMAUI.Views.DBNovellaScenarioPage"
+             Title="DBNovellaScenarioPage">
+    <StackLayout>
+        <Label Text="Name"/>
+        <Entry Text="{Binding Name}" x:Name="nimi"/>
+        <Label Text="Autor"/>
+        <Entry Text="{Binding Author}" Keyboard="Author"/>
+        <Label Text="Stsenaarium"/>
+        <Editor Text="{Binding Scenario}" Keyboard="Scenario"/>
+        <HorizontalStackLayout>
+            <Button Text="Salvesta" Clicked="SaveDBNovellaScenario" WidthRequest="130" TextColor="White"/>
+            <Button Text="Kustuta" Clicked="DeleteDBNovellaScenario" WidthRequest="130" TextColor="White"/>
+            <Button Text="Tühista" Clicked="Cancel" WidthRequest="130" TextColor="White"/>
+        </HorizontalStackLayout>
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ITopiaMAUI.Views.DBNovellaScenarioListPage"
+             Title="DBNovellaScenarioListPage">
+    <StackLayout>
+        <Button Text="Tühista" FontSize="Medium" Clicked="Button_Clicked"/>
+        <ListView x:Name="scenarioList" ItemsSource="{Binding}" ItemSelected="OnItemSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding Name}" FontSize="Medium"></Label>
+                            </HorizontalStackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Button Text="Lisa" Clicked="CreateScenario" TextColor="White"/>
+    </StackLayout>
+</ContentPage>

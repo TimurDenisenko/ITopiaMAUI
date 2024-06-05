@@ -11,20 +11,16 @@ public partial class App : Application
     {
         get
         {
-            if (database == null)
-            {
-                database = new Repository(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DATABASE_NAME));
-            }
+            database ??= new Repository(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), DATABASE_NAME));
             return database;
         }
     }
     public App()
     {
-        Database.DeleteAllNovellaScenarios();
-        Database.DeleteAllSaves();
         Database.SaveNovellaScenario(new DBNovellaScenario
         {
             Author = "Timur Denisenko",
+            Name = "ITopia",
             Scenario = FileManage.SerializeToFile(ITopiaMAUI.Properties.Resources.scenario.Split('\n'))
         });
         MainPage = new Shell { CurrentItem = new MainFormView()};
