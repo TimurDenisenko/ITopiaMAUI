@@ -7,13 +7,17 @@
         <Label Text="Name"/>
         <Entry Text="{Binding Name}" x:Name="nimi"/>
         <Label Text="Autor"/>
-        <Entry Text="{Binding Author}" Keyboard="Author"/>
+        <Entry Text="{Binding Author}" x:Name="Author"/>
         <Label Text="Stsenaarium"/>
-        <Editor Text="{Binding Scenario}" Keyboard="Scenario"/>
+        <Editor Text="{Binding Scenario}" x:Name="Scenario" HeightRequest="130"/>
         <HorizontalStackLayout>
-            <Button Text="Salvesta" Clicked="SaveDBNovellaScenario" WidthRequest="130" TextColor="White"/>
-            <Button Text="Kustuta" Clicked="DeleteDBNovellaScenario" WidthRequest="130" TextColor="White"/>
-            <Button Text="Tühista" Clicked="Cancel" WidthRequest="130" TextColor="White"/>
+            <Label Text="Laadi see skript alla"/>
+            <CheckBox x:Name="IsLoad" Color="Black"/>
+        </HorizontalStackLayout>
+        <HorizontalStackLayout>
+            <Button Text="Salvesta" Clicked="SaveDBNovellaScenario" WidthRequest="130" TextColor="#FF9F68" BackgroundColor="#7C203A"/>
+            <Button Text="Kustuta" Clicked="DeleteDBNovellaScenario" WidthRequest="130" TextColor="#FF9F68" BackgroundColor="#7C203A"/>
+            <Button Text="Tühista" Clicked="Cancel" WidthRequest="130" TextColor="#FF9F68" BackgroundColor="#7C203A"/>
         </HorizontalStackLayout>
     </StackLayout>
 </ContentPage>

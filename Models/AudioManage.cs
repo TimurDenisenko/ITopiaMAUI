@@ -7,7 +7,8 @@ namespace ITopiaMAUI.Models
         public static double Volume { get; set; }
         public IAudioPlayer Player { get; set; }
         public bool IsPausing { get; set; }
-        private List<MemoryStream> music = new List<MemoryStream>();
+        private readonly List<MemoryStream> music = new List<MemoryStream>();
+        private bool musicEnd;
         public AudioManage(byte[] sound)
         {
             Volume = 75;
@@ -16,38 +17,48 @@ namespace ITopiaMAUI.Models
         }
         public AudioManage()
         {
-            loadMusic();
+            LoadMusic();
             Volume = 75;
+            musicEnd = true;
         }
         public void Play()
         {
             Player.Volume = Volume / 100;
             Player.Play();
         }
-        private void loadMusic()
+        private void LoadMusic()
         {
             for (int i = 1; i < 9; i++)
-            {
+            { 
                 music.Add(new MemoryStream(Properties.Resources.ResourceManager.GetObject("music" + i) as byte[]));
             }
         }
-        public void PlayMusic()
+        public async void PlayMusicAsync()
         {
-            if (!Player?.IsPlaying ?? true)
+            try
             {
-                Player = new AudioManager().CreatePlayer(music[new Random().Next(8)]);
-                Player.PlaybackEnded+=async(s, e) => await Task.Run(() => NovellaScenario.MusicPlayer.PlayMusic());
-                Play();
+                while (true)
+                {
+                    if (musicEnd)
+                    {
+                        musicEnd = false;
+                        Player?.Dispose();
+                        Player = new AudioManager().CreatePlayer(music[new Random().Next(8)]);
+                        Player.PlaybackEnded += (s, e) => musicEnd = true;
+                        Play();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                NovellaScenario.MusicPlayer = new AudioManage();
+                await Task.Run(() => NovellaScenario.MusicPlayer.PlayMusicAsync());
             }
         }
         public void ReloadAsync()
         {
             Player.Pause();
             Play();
-        }
-        public void Pause()
-        {
-            Player.Pause();
         }
     }
 }

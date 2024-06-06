@@ -4,7 +4,7 @@
              x:Class="ITopiaMAUI.Views.DBNovellaScenarioListPage"
              Title="DBNovellaScenarioListPage">
     <StackLayout>
-        <Button Text="Tühista" FontSize="Medium" Clicked="Button_Clicked"/>
+        <Button Text="Tühista" Clicked="Button_Clicked" TextColor="#FF9F68" BackgroundColor="#7C203A"/>
         <ListView x:Name="scenarioList" ItemsSource="{Binding}" ItemSelected="OnItemSelected">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -18,6 +18,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Text="Lisa" Clicked="CreateScenario" TextColor="White"/>
+        <Button Text="Lisa" Clicked="CreateScenario" FontSize="Medium"  BackgroundColor="#7C203A" TextColor="#FF9F68"/>
     </StackLayout>
 </ContentPage>

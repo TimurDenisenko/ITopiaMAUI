@@ -104,7 +104,20 @@ public class GameView : ContentPage
         Content = mainLayout;
         if (save == null)
         {
-            DBNovellaScenario ns = App.Database.GetNovellaScenarios().ToArray()[0];
+            DBNovellaScenario ns;
+            try
+            {
+                ns = App.Database.GetNovellaScenario(NovellaScenario.ScenarioID);
+            }
+            catch (Exception)
+            {
+                if (App.Database.GetNovellaScenarios().ToArray().Length == 0)
+                {
+                    DisplayAlert("Viga", "Stsenaarium puudub","Tühista");
+                    App.Current.MainPage = new MainFormView();
+                }
+                ns = App.Database.GetNovellaScenarios().ToArray()[0];
+            }
             NovellaScenario.PageNum = 0;
             NovellaScenario.Scenario = FileManage.DeserializeFile<string[]>(ns.Scenario);
         }
@@ -121,6 +134,12 @@ public class GameView : ContentPage
 
     private async void GeneratePage()
     {
+        if (NovellaScenario.Scenario.Length <= NovellaScenario.PageNum)
+        {
+            await DisplayAlert("Lõpp", "Õnnitlused mängija! Ole selle stsenaariumi lõpetanud.","Tühista");
+            App.Current.MainPage = new MainFormView();
+            return;
+        }
         if (new string[] {"Back", "Pers"}.Any(x => NovellaScenario.Scenario[NovellaScenario.PageNum].Split(":")[0]==x))
         {
             string[] changes = NovellaScenario.Scenario[NovellaScenario.PageNum].Replace(" ", "").Trim().Split('|');

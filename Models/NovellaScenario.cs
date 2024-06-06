@@ -8,6 +8,7 @@ namespace ITopiaMAUI
     {
         public static SaveViewModel Save { get; set; }
         public static AudioManage MusicPlayer { get; set; }
+        public static int ScenarioID { get; set; }
         public static string Name { get; set; }
         public static int PageNum { get; set; }
         public static int TestNum { get; set; }

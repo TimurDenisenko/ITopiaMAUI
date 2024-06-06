@@ -56,8 +56,11 @@ public partial class MainFormView : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        NovellaScenario.MusicPlayer = new AudioManage();
-        await Task.Run(() => NovellaScenario.MusicPlayer.PlayMusic());
+        if (NovellaScenario.MusicPlayer == null)
+        {
+            NovellaScenario.MusicPlayer = new AudioManage();
+            await Task.Run(() => NovellaScenario.MusicPlayer.PlayMusicAsync());
+        }
     }
 
     private void AddRange(params IView[] views) => Array.ForEach(views, layout.Add);
