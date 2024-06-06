@@ -12,7 +12,7 @@ public class GameView : ContentPage
     private readonly Image character;
     private readonly Label dialog, title;
     private readonly StackLayout st;
-    private readonly Editor codeEditor;
+    private readonly Entry codeEditor;
     private readonly Button forward, back;
     private Script script;
     public GameView(SaveViewModel save = null)
@@ -47,7 +47,7 @@ public class GameView : ContentPage
             FontSize = 15,
             TextColor = Colors.Black,
         };
-        codeEditor = new Editor
+        codeEditor = new Entry
         {
             HeightRequest = 270,
             WidthRequest = 500,
@@ -57,7 +57,7 @@ public class GameView : ContentPage
             BackgroundColor = Colors.White,
             VerticalTextAlignment = TextAlignment.Start,
         };
-        codeEditor.Completed += CodeEditor_Completed;
+        codeEditor.Completed+=CodeEditor_Completed;
         st = new StackLayout
         {
             Children =
@@ -131,7 +131,6 @@ public class GameView : ContentPage
 
         GeneratePage();
     }
-
     private async void GeneratePage()
     {
         if (NovellaScenario.Scenario.Length <= NovellaScenario.PageNum)
