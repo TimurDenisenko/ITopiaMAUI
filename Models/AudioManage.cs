@@ -5,16 +5,9 @@ namespace ITopiaMAUI.Models
     public class AudioManage
     {
         public static double Volume { get; set; }
-        public IAudioPlayer Player { get; set; }
-        public bool IsPausing { get; set; }
+        private IAudioPlayer Player { get; set; }
         private readonly List<MemoryStream> music = new List<MemoryStream>();
         private bool musicEnd;
-        public AudioManage(byte[] sound)
-        {
-            Volume = 75;
-            Player = new AudioManager().CreatePlayer(new MemoryStream(sound));
-            Player.Volume = Volume / 100;
-        }
         public AudioManage()
         {
             LoadMusic();
